@@ -1,0 +1,21 @@
+﻿@using Projekt_Kremer.Data;
+
+@inject MockDB db
+
+<div class="cards-list">
+    @foreach (var card in PlantCards)
+    {
+        <PlantCard Card=card/>
+    }
+</div>
+
+
+
+@code {
+    private List<PlantCardDTO> PlantCards = new();
+
+    protected override void OnInitialized()
+    {
+        PlantCards = db.Data;
+    }
+}
