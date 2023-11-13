@@ -1,11 +1,14 @@
-﻿@using Projekt_Kremer.Data;
+@using Projekt_Kremer.Data;
 
 @inject MockDB db
 
+<button class="m-4 btn btn-primary" @onclick=ToggleFavorites>
+    Favoriten Filtern
+</button>
 <div class="cards-list">
     @foreach (var card in PlantCards)
     {
-        <PlantCard Card=card/>
+        <PlantCard FavoriteChanged=loadData Card=card />
     }
 </div>
 
@@ -13,9 +16,24 @@
 
 @code {
     private List<PlantCardDTO> PlantCards = new();
+    private bool filterFavorites;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
+    {
+        await loadData();
+    }
+
+    private async void ToggleFavorites()
+    {
+        filterFavorites = !filterFavorites;
+        await loadData();
+    }
+
+    private async Task loadData()
     {
         PlantCards = db.Data;
+        if (filterFavorites)
+            PlantCards = PlantCards.Where(x => x.IsFavorite).ToList();
+        StateHasChanged();
     }
 }
